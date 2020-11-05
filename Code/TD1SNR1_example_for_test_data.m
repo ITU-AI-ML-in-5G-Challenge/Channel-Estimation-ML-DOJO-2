@@ -53,6 +53,7 @@ Ch_all = zeros(Nc,64,16,256);
 for i =1:Nc
     Pilotsi = squeeze(Pilots(i,:,:));
     [Ch, AoA, AoD, ToF, Alpha, NUM] = ReconstructChannel_v2(Pilotsi, Phi, N_RX, N_TX);
+    Ch_all(i,:,:,:)=Ch;
 end   
 
 training_data_real = real(Ch_all);
@@ -61,8 +62,8 @@ training_data_imag = imag(Ch_all);
 chan_save_file_hdf5 = 'Channels_test_dataset_v3_20_pilots_1_data_set.hdf5'
 
 if ~isfile(chan_save_file_hdf5)
-    h5create(chan_save_file_hdf5, '/training_data_real', size(Ch));
-    h5create(chan_save_file_hdf5, '/training_data_imag', size(Ch));
+    h5create(chan_save_file_hdf5, '/training_data_real', size(Ch_all));
+    h5create(chan_save_file_hdf5, '/training_data_imag', size(Ch_all));
 end
 
 h5write(chan_save_file_hdf5, '/training_data_real', training_data_real);
