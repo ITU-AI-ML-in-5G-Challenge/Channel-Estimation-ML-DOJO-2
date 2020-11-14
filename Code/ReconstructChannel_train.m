@@ -1,4 +1,4 @@
-function [Ch, AoA, AoD, ToF, Alpha] = ReconstructChannel(Pilots, Phi, N_RX, N_TX, D_w)
+function [CH, TH] = ReconstructChannel_train(Pilots, Phi, N_RX, N_TX, D_w)
 % function R = ReconstructChannel(Pilots, Phi, N_RX, N_TX)
 %
 % INPUTS
@@ -20,7 +20,7 @@ Time_sr_d = 4;             % Time sampling ratio
 Time_sr_r = 32;            % Time sampling ratio for refinement
 Angle_sr_d = 2;            % Angle sampling ratio for detection
 Angle_sr_r = 32;           % Angle sampling ratio for refinement
-Confidence = 0.98;         % Detection confidence
+Confidence_min = 0.7;      % Detection confidence minimum
 PingPong_it = 3;           % Number of iteration to refine the angles
 bool_debug = false;        % Debug condition for plots
 %% Whitening
@@ -57,13 +57,16 @@ Pilots_res_t = ifft(Pilots_res, Time_res_d, 2);
 Pilots_res_t_esp = (A_RTX_d*Phi')*Pilots_res_t;
 %% Compute noise level and the confidence threshold
 Noise_level = sqrt(1/(2*log(2)))*median(abs(Pilots_res_t_esp(:)), 1);
-Confidence_TH = Noise_level*sqrt(-2*log(1-Confidence^(1/numel(Pilots_res_t_esp))));
+Confidence_TH = Noise_level*sqrt(-2*log(1-Confidence_min^(1/numel(Pilots_res_t_esp))));
 %% Plot noise level and std margins
 if bool_debug
     figure(1)
     plot(max(abs(Pilots_res_t_esp)).', 'b', 'LineWidth', 1.5), hold on
     plot([1, Time_res_d], repmat(Confidence_TH, 1, 2), 'r', 'LineWidth', 1);hold off
 end
+%% Initialization
+CH = cell(0);
+TH = [];
 %% Path substraction loop
 AoA = [];
 AoD = [];
@@ -116,13 +119,17 @@ while amax > Confidence_TH
     H   = [H, h(:)];
     P   = [P, p(:)];
     Alpha = P \ Pilots(:);
+    %% Reconstruct channel
+    Ch = reshape(H*Alpha, [N_RX, N_TX, N_fft]);
+    CH{end+1} = Ch;
+    TH(end+1) = (1-exp(-(amax/Noise_level)^2/2))^numel(Pilots_res_t_esp);
     %% Update pilot residual
     Pilots_res = reshape(Pilots(:) - P*Alpha, size(Pilots));
     Pilots_res_t = ifft(Pilots_res, Time_res_d, 2);
     Pilots_res_t_esp = (A_RTX_d*Phi')*Pilots_res_t;
     %% Compute noise level and the confidence threshold
     Noise_level = sqrt(1/(2*log(2)))*median(abs(Pilots_res_t_esp(:)), 1);
-    Confidence_TH = Noise_level*sqrt(-2*log(1-Confidence^(1/numel(Pilots_res_t_esp))));
+    Confidence_TH = Noise_level*sqrt(-2*log(1-Confidence_min^(1/numel(Pilots_res_t_esp))));
     %% Plot reconstruction and residual
     if bool_debug
         figure(2)
@@ -134,7 +141,5 @@ while amax > Confidence_TH
     %% Recompute max
     [amax, imax] = max(abs(Pilots_res_t_esp(:)));
 end
-%% Reconstruct channel
-Ch = reshape(H*Alpha, [N_RX, N_TX, N_fft]);
 
 end

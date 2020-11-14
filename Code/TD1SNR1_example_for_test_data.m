@@ -52,7 +52,7 @@ Nc = P_s(1);
 Ch_all = zeros(Nc,64,16,256);
 for i =1:Nc
     Pilotsi = squeeze(Pilots(i,:,:));
-    [Ch, AoA, AoD, ToF, Alpha, NUM] = ReconstructChannel_v2(Pilotsi, Phi, N_RX, N_TX);
+    [Ch, AoA, AoD, ToF, Alpha, NUM] = ReconstructChannel(Pilotsi, Phi, N_RX, N_TX);
     Ch_all(i,:,:,:)=Ch;
 end   
 
