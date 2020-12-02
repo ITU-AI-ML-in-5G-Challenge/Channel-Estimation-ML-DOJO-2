@@ -6,9 +6,14 @@ This code present our results to the ML5G-PHY [channel estimation] challenge, wh
 ## The problem statement can be found here: 
 [Challenge: Site-specific channel estimation with hybrid MIMO architectures](https://research.ece.ncsu.edu/ai5gchallenge/)  <br />
 The train and evaluation data can also be downloaded from that link.
-## Requirements:
-  The code has been developed using Matlab 2019b.
+
+## Report:
+  Our report presenting the development of the algorithms and training procedures is available [here](https://github.com/ITU-AI-ML-in-5G-Challenge/Channel-Estimation-ML-DOJO-2/blob/master/AI5G_Challenge-DOJO.pdf).
+  
 ## Code:
+### Requirements:
+  The code has been developed using Matlab 2019b.
+### Description:
 * TD1SNR1_example_for_test_data.m is an example of how to obtain the predictions for test data for the test dataset 1- SNR1.
 * ReconstructChannel.m is the function with our algorithm to obtain the channels. <br />
    Whitening.m is a subfunction used to whitten the noise on ReconstructChannel.m.
