@@ -3,8 +3,8 @@
 This code present our results to the ML5G-PHY [channel estimation] challenge, which is part of the [ITU Artificial Intelligence/Machine Learning in 5G Challenge](https://www.itu.int/en/ITU-T/AI/challenge/2020/Pages/default.aspx) of 2020. 
 
 
-## The problem statement can be found here: 
-[Challenge: Site-specific channel estimation with hybrid MIMO architectures](https://research.ece.ncsu.edu/ai5gchallenge/)  <br />
+## Problem statement: 
+The problem statement can be found here: [Challenge: Site-specific channel estimation with hybrid MIMO architectures](https://research.ece.ncsu.edu/ai5gchallenge/)  <br />
 The train and evaluation data can also be downloaded from that link.
 
 ## Report:
